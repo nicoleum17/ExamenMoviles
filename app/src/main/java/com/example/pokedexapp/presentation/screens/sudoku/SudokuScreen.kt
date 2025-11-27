@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,8 +34,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.pokedexapp.presentation.ui.components.SudokuGrid // Asegúrate de tener esta importación
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.pokedexapp.presentation.ui.components.SudokuGrid
 
+/*
 val initialSudokuBoard =
     List(3) { row ->
         List(3) { col ->
@@ -47,15 +49,18 @@ val initialSudokuBoard =
             }
         }
     }
+ */
 
 @Suppress("ktlint:standard:function-naming")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SudokuScreen(
+    viewModel: SudokuViewModel = hiltViewModel(),
     onSaveSuccess: () -> Unit = {},
     onCancel: () -> Unit = {},
 ) {
-    var boardState by remember { mutableStateOf(initialSudokuBoard) }
+    val uiState by viewModel.uiState.collectAsState()
+    var boardState by remember { mutableStateOf(uiState.puzzle) }
     val isLoading = false
 
     val onCellChange: (row: Int, col: Int, value: String) -> Unit = { row, col, value ->
